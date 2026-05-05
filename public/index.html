@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResearchNexus Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <script>
+        // Protect route
+        const userStr = localStorage.getItem('user');
+        if (!userStr) {
+            window.location.href = '/login.html';
+        }
+        const user = JSON.parse(userStr);
+    </script>
+
+    <!-- Top Navigation -->
+    <header class="top-nav">
+        <div class="logo">
+            <span class="logo-icon">→</span> ResearchNexus
+        </div>
+        <div class="user-profile">
+            <span id="user-name" class="user-name">Loading...</span>
+            <div id="user-initials" class="user-initials"></div>
+        </div>
+    </header>
+
+    <div class="app-layout">
+        <!-- Left Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-section">WORKSPACE</div>
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active" data-view="dashboard">
+                    <span class="nav-icon">⊞</span> Dashboard
+                </a>
+                <a href="#" class="nav-item" data-view="papers">
+                    <span class="nav-icon">📄</span> Papers ↗
+                </a>
+                <a href="#" class="nav-item" data-view="datasets">
+                    <span class="nav-icon">🗄️</span> Datasets ↗
+                </a>
+                <a href="#" class="nav-item" data-view="peer-review">
+                    <span class="nav-icon">🏠</span> Peer Review ↗
+                </a>
+                <a href="#" class="nav-item" data-view="citations">
+                    <span class="nav-icon">🔗</span> Citations ↗
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div id="view-dashboard" class="view-section active-view">
+                <div class="greeting-header">
+                    <h1 id="greeting">Good morning, Priya</h1>
+                    <p class="greeting-subtext">3 papers awaiting your review • 2 collaboration invites</p>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Papers published</div>
+                        <div class="stat-value text-accent" id="stat-papers">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Total citations</div>
+                        <div class="stat-value" id="stat-citations">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Collaborators</div>
+                        <div class="stat-value" id="stat-collab">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Datasets shared</div>
+                        <div class="stat-value" id="stat-datasets">0</div>
+                    </div>
+                </div>
+
+                <div class="dashboard-split">
+                    <!-- Left: Recent Papers -->
+                    <div class="recent-papers-section">
+                        <div class="section-header">
+                            <h2>Recent papers</h2>
+                            <button class="btn-primary" onclick="openModal('create-paper-modal')" style="padding: 6px 16px; font-size: 13px;">+ Create New Paper</button>
+                            <div class="filter-tabs">
+                                <button class="filter-tab active">All</button>
+                                <button class="filter-tab">Mine</button>
+                                <button class="filter-tab">Shared</button>
+                            </div>
+                        </div>
+                        
+                        <div class="papers-list" id="papers-list">
+                            <!-- Paper cards injected via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Right: Recent Activity -->
+                    <div class="recent-activity-section">
+                        <div class="section-header">
+                            <h2>Recent activity</h2>
+                        </div>
+                        <div class="activity-card">
+                            <div class="activity-feed">
+                                <div class="activity-item">
+                                    <div class="activity-dot dot-green"></div>
+                                    <div class="activity-content">
+                                        <p>Chen L. added a comment on Transformer paper</p>
+                                        <span class="activity-time">2 hours ago</span>
+                                    </div>
+                                </div>
+                                <div class="activity-item">
+                                    <div class="activity-dot dot-blue"></div>
+                                    <div class="activity-content">
+                                        <p>New citation from ICML 2025 paper</p>
+                                        <span class="activity-time">5 hours ago</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GitHub-like Version History (Papers) -->
+            <div id="view-papers" class="view-section">
+                <div class="section-header">
+                    <h2>Version History: Quantum Computing for Optimization</h2>
+                    <button class="btn-primary" style="padding: 6px 16px; font-size: 13px;">Create new branch</button>
+                </div>
+                <div class="version-split">
+                    <div class="commit-history" id="commit-history">
+                        <!-- Commits injected via JS -->
+                    </div>
+                    <div class="diff-viewer">
+                        <div class="diff-header">
+                            <h3 id="diff-title">Select a commit to view changes</h3>
+                        </div>
+                        <div class="diff-content" id="diff-content">
+                            <!-- Diff injected via JS -->
+                            <div style="color: var(--text-secondary); text-align: center; padding: 40px;">
+                                No commit selected
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Kaggle-like Datasets -->
+            <div id="view-datasets" class="view-section">
+                <div class="section-header">
+                    <h2>Public Datasets</h2>
+                    <button class="btn-primary" onclick="openModal('upload-modal')" style="padding: 6px 16px; font-size: 13px;">+ Upload Dataset</button>
+                </div>
+                <div class="datasets-grid" id="datasets-grid">
+                    <!-- Datasets injected via JS -->
+                </div>
+            </div>
+
+            <!-- Academic Journal: Peer Review -->
+            <div id="view-peer-review" class="view-section">
+                <div class="section-header">
+                    <h2>Peer Review Dashboard</h2>
+                </div>
+                <div class="reviews-list" id="reviews-list">
+                    <!-- Reviews injected via JS -->
+                </div>
+            </div>
+
+            <!-- Citations Graph -->
+            <div id="view-citations" class="view-section">
+                <div class="section-header">
+                    <h2>Citation Impact Graph</h2>
+                </div>
+                <div class="citation-graph-placeholder">
+                    <p>Interactive Citation Network Visualization</p>
+                    <div style="width: 100px; height: 100px; border-radius: 50%; background-color: var(--accent-green); margin: 0 auto; opacity: 0.8; box-shadow: 0 0 40px var(--accent-green);"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <!-- Create Paper Modal -->
+    <div class="modal-overlay" id="create-paper-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create New Paper</h3>
+                <button class="close-btn" onclick="closeModal('create-paper-modal')">×</button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="new-paper-title" placeholder="Paper Title" style="width:100%; padding: 10px; margin-bottom: 16px; background: #2D2D2D; border: 1px solid var(--border-color); color: white; border-radius: 4px;">
+                <input type="text" id="new-paper-domain" placeholder="Domain (e.g. Computer Science)" style="width:100%; padding: 10px; margin-bottom: 16px; background: #2D2D2D; border: 1px solid var(--border-color); color: white; border-radius: 4px;">
+                <input type="text" id="new-paper-authors" placeholder="Authors (comma separated)" style="width:100%; padding: 10px; margin-bottom: 16px; background: #2D2D2D; border: 1px solid var(--border-color); color: white; border-radius: 4px;">
+                <button class="btn-primary" style="width: 100%" id="btn-submit-paper">Save Paper</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Modal -->
+    <div class="modal-overlay" id="upload-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Upload Dataset</h3>
+                <button class="close-btn" onclick="closeModal('upload-modal')">×</button>
+            </div>
+            <div class="modal-body">
+                <input type="text" placeholder="Dataset Title" style="width:100%; padding: 10px; margin-bottom: 16px; background: #2D2D2D; border: 1px solid var(--border-color); color: white; border-radius: 4px;">
+                <div style="border: 2px dashed var(--border-color); padding: 40px; text-align: center; border-radius: 8px; margin-bottom: 16px; color: var(--text-secondary);">
+                    Drag and drop your JSON/CSV/FASTA file here
+                </div>
+                <button class="btn-primary" style="width: 100%" onclick="closeModal('upload-modal')">Upload File</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preview Modal -->
+    <div class="modal-overlay" id="preview-modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3>Data Preview</h3>
+                <button class="close-btn" onclick="closeModal('preview-modal')">×</button>
+            </div>
+            <div class="modal-body">
+                <table style="width: 100%; text-align: left; border-collapse: collapse; font-size: 13px;">
+                    <thead style="background: var(--bg-app);">
+                        <tr><th style="padding: 10px; border-bottom: 1px solid var(--border-color);">qubit_id</th><th style="padding: 10px; border-bottom: 1px solid var(--border-color);">error_rate</th><th style="padding: 10px; border-bottom: 1px solid var(--border-color);">timestamp</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td style="padding: 10px; border-bottom: 1px solid var(--border-color);">q_001</td><td style="padding: 10px; border-bottom: 1px solid var(--border-color);">0.0024</td><td style="padding: 10px; border-bottom: 1px solid var(--border-color);">2025-10-12T08:00:00Z</td></tr>
+                        <tr><td style="padding: 10px; border-bottom: 1px solid var(--border-color);">q_002</td><td style="padding: 10px; border-bottom: 1px solid var(--border-color);">0.0019</td><td style="padding: 10px; border-bottom: 1px solid var(--border-color);">2025-10-12T08:00:05Z</td></tr>
+                        <tr><td style="padding: 10px; border-bottom: 1px solid var(--border-color);">q_003</td><td style="padding: 10px; border-bottom: 1px solid var(--border-color);">0.0041</td><td style="padding: 10px; border-bottom: 1px solid var(--border-color);">2025-10-12T08:00:10Z</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Google Docs Editor Modal -->
+    <div class="modal-overlay" id="editor-modal">
+        <div class="modal-content" style="max-width: 900px; height: 80vh; display: flex; flex-direction: column;">
+            <div class="modal-header">
+                <h3>Collaborative Editor (Google Docs style)</h3>
+                <button class="close-btn" onclick="closeModal('editor-modal')">×</button>
+            </div>
+            <div class="editor-toolbar" style="padding: 10px; border-bottom: 1px solid var(--border-color); display: flex; gap: 10px; align-items: center; background: var(--bg-app);">
+                <button class="btn-outline" style="width: auto;" onclick="document.execCommand('bold', false, null)">Bold</button>
+                <button class="btn-outline" style="width: auto;" onclick="document.execCommand('italic', false, null)">Italic</button>
+                <select class="btn-outline" style="width: auto; padding: 4px 8px;" onchange="document.execCommand('fontSize', false, this.value); this.selectedIndex=0;">
+                    <option value="" disabled selected>Size</option>
+                    <option value="2">Small</option>
+                    <option value="3">Normal</option>
+                    <option value="5">Large</option>
+                    <option value="7">Huge</option>
+                </select>
+                <input type="color" class="btn-outline" style="width: 32px; height: 32px; padding: 2px; cursor: pointer;" onchange="document.execCommand('foreColor', false, this.value)" title="Text Color">
+                <button class="btn-outline" style="width: auto;">Cite Source</button>
+                <button class="btn-primary" style="width: auto; padding: 6px 16px; font-size: 13px;" onclick="saveDocument()">Save Changes</button>
+                <span style="margin-left: auto; color: var(--text-secondary); font-size: 12px; display: flex; align-items: center;">🟢 Devon Lane is typing...</span>
+            </div>
+            <div class="modal-body" style="flex: 1; padding: 40px; background: #E8E8E8; color: #111; overflow-y: auto;">
+                <div contenteditable="true" style="background: white; padding: 60px; min-height: 100%; box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-family: serif; font-size: 16px; line-height: 1.8; outline: none;">
+                    <h2>1. Introduction</h2>
+                    <p>The problem of quantum state decoherence remains one of the fundamental challenges in scaling quantum architectures...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openModal(id) {
+            document.getElementById(id).style.display = 'flex';
+        }
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+        function saveDocument() {
+            // In a real app, this would send the editor content via POST request to the server
+            alert("Document saved successfully! Version history updated.");
+            closeModal('editor-modal');
+        }
+    </script>
+    <script src="/js/app.js"></script>
+</body>
+</html>

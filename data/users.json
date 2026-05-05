@@ -1,0 +1,15 @@
+[
+  {
+    "id": "u1",
+    "name": "Dr. Priya Sharma",
+    "email": "priya@nexus.edu",
+    "password": "password123",
+    "initials": "PS",
+    "stats": {
+        "papersPublished": 24,
+        "citations": 1842,
+        "collaborators": 17,
+        "datasetsShared": 8
+    }
+  }
+]

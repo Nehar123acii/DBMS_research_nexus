@@ -1,0 +1,20 @@
+[
+  {
+    "id": "r1",
+    "paperId": "1",
+    "paperTitle": "Transformer-based citation graph embeddings",
+    "reviewer": "Anonymous Reviewer A",
+    "status": "Pending",
+    "date": "2026-05-03",
+    "comments": "The methodology is sound, but figure 2 needs higher resolution."
+  },
+  {
+    "id": "r2",
+    "paperId": "2",
+    "paperTitle": "Quantum Computing for Optimization",
+    "reviewer": "Dr. Sarah Chen",
+    "status": "Accepted",
+    "date": "2026-04-28",
+    "comments": "Excellent contribution to the field. No further revisions needed."
+  }
+]

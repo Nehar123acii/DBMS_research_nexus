@@ -1,0 +1,28 @@
+[
+  {
+    "id": "ds1",
+    "title": "Quantum Error Correction Logs 2025",
+    "uploader": "Dr. Priya Sharma",
+    "size": "1.2 GB",
+    "format": "JSON/CSV",
+    "schema": [
+      {"field": "qubit_id", "type": "int"},
+      {"field": "error_rate", "type": "float"},
+      {"field": "timestamp", "type": "string"}
+    ],
+    "downloads": 342
+  },
+  {
+    "id": "ds2",
+    "title": "Mouse Brain Cell Sequences",
+    "uploader": "Ralph Edwards",
+    "size": "4.8 GB",
+    "format": "FASTA",
+    "schema": [
+      {"field": "sequence_id", "type": "string"},
+      {"field": "nucleotides", "type": "string"},
+      {"field": "quality_score", "type": "int"}
+    ],
+    "downloads": 89
+  }
+]

@@ -1,0 +1,20 @@
+[
+  {
+    "id": "v1",
+    "paperId": "1",
+    "commitHash": "b3f9a1c",
+    "author": "Annette Black",
+    "message": "Initial draft of methodology",
+    "date": "2026-04-10T14:30:00Z",
+    "diff": "+ Added quantum state formulation section\n+ Added basic error correction equations"
+  },
+  {
+    "id": "v2",
+    "paperId": "1",
+    "commitHash": "e7c2d9b",
+    "author": "Devon Lane",
+    "message": "Revised equations based on peer review",
+    "date": "2026-04-12T09:15:00Z",
+    "diff": "- Error rate formula had typo\n+ Fixed error rate formulation\n+ Added figure 1 references"
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "id": "1",
+    "title": "Quantum Computing for Optimization",
+    "domain": "Computer Science",
+    "rating": "4.8",
+    "authors": ["Annette Black", "Devon Lane"],
+    "date": "2026-04-15"
+  },
+  {
+    "id": "2",
+    "title": "Molecular Biology of the Cell",
+    "domain": "Biology",
+    "rating": "4.6",
+    "authors": ["Ralph Edwards"],
+    "date": "2026-05-01"
+  },
+  {
+    "id": "3",
+    "title": "Transformer-based citation graph embeddings",
+    "domain": "Artificial Intelligence",
+    "rating": "4.9",
+    "authors": ["Priya Sharma"],
+    "date": "2026-05-03"
+  },
+  {
+    "id": "4",
+    "title": "Sustainable Supply Chain Models using Blockchain",
+    "domain": "Economics",
+    "rating": "4.5",
+    "authors": ["Devon Lane", "Arun Patel"],
+    "date": "2026-04-20"
+  },
+  {
+    "id": "5",
+    "title": "CRISPR-Cas9 Off-target Effects in Mammalian Cells",
+    "domain": "Genetics",
+    "rating": "4.7",
+    "authors": ["Ralph Edwards", "Sarah Chen"],
+    "date": "2026-03-12"
+  }
+]
