@@ -25,6 +25,7 @@
         <div class="user-profile">
             <span id="user-name" class="user-name">Loading...</span>
             <div id="user-initials" class="user-initials"></div>
+            <button class="btn-outline" style="margin-left: 16px; font-size: 12px; padding: 6px 12px; border-color: var(--border-color); color: var(--text-secondary);" onclick="logout()">Logout</button>
         </div>
     </header>
 
@@ -33,20 +34,23 @@
         <aside class="sidebar">
             <div class="sidebar-section">WORKSPACE</div>
             <nav class="nav-menu">
-                <a href="#" class="nav-item active" data-view="dashboard">
+                <a href="#dashboard" class="nav-item active" data-view="dashboard">
                     <span class="nav-icon">⊞</span> Dashboard
                 </a>
-                <a href="#" class="nav-item" data-view="papers">
+                <a href="#papers" class="nav-item" data-view="papers">
                     <span class="nav-icon">📄</span> Papers ↗
                 </a>
-                <a href="#" class="nav-item" data-view="datasets">
+                <a href="#datasets" class="nav-item" data-view="datasets">
                     <span class="nav-icon">🗄️</span> Datasets ↗
                 </a>
-                <a href="#" class="nav-item" data-view="peer-review">
+                <a href="#peer-review" class="nav-item" data-view="peer-review">
                     <span class="nav-icon">🏠</span> Peer Review ↗
                 </a>
-                <a href="#" class="nav-item" data-view="citations">
+                <a href="#citations" class="nav-item" data-view="citations">
                     <span class="nav-icon">🔗</span> Citations ↗
+                </a>
+                <a href="#admin" class="nav-item" id="nav-admin" style="display: none;">
+                    <span class="nav-icon">🛡️</span> Admin Panel
                 </a>
             </nav>
         </aside>
@@ -54,26 +58,35 @@
         <!-- Main Content -->
         <main class="main-content">
             <div id="view-dashboard" class="view-section active-view">
-                <div class="greeting-header">
-                    <h1 id="greeting">Good morning, Priya</h1>
-                    <p class="greeting-subtext">3 papers awaiting your review • 2 collaboration invites</p>
+                <div class="greeting-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                    <div>
+                        <h1 id="greeting">Good morning, Priya</h1>
+                        <p class="greeting-subtext">3 papers awaiting your review • 2 collaboration invites</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 20px;">
+                        <input type="text" id="global-search" placeholder="Search papers, datasets..." style="padding: 10px 16px; border-radius: 20px; border: 1px solid var(--border-color); background: var(--bg-nav); color: var(--text-primary); width: 280px; font-size: 13px; outline: none;">
+                        <div style="position: relative; cursor: pointer; padding: 8px;" id="notification-bell" onclick="alert('You have new notifications!')">
+                            <span style="font-size: 20px; filter: grayscale(1);">🔔</span>
+                            <span id="notif-badge" style="position: absolute; top: 2px; right: 2px; background: #ef4444; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 11px; display: none; align-items: center; justify-content: center; font-weight: bold; box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);">0</span>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Stats Grid -->
                 <div class="stats-grid">
-                    <div class="stat-card">
+                    <div class="stat-card" style="cursor: pointer;" onclick="window.location.hash='#papers'">
                         <div class="stat-label">Papers published</div>
                         <div class="stat-value text-accent" id="stat-papers">0</div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card" style="cursor: pointer;" onclick="window.location.hash='#citations'">
                         <div class="stat-label">Total citations</div>
                         <div class="stat-value" id="stat-citations">0</div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card" style="cursor: pointer;" onclick="window.location.hash='#peer-review'">
                         <div class="stat-label">Collaborators</div>
                         <div class="stat-value" id="stat-collab">0</div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card" style="cursor: pointer;" onclick="window.location.hash='#datasets'">
                         <div class="stat-label">Datasets shared</div>
                         <div class="stat-value" id="stat-datasets">0</div>
                     </div>
@@ -104,14 +117,14 @@
                         </div>
                         <div class="activity-card">
                             <div class="activity-feed">
-                                <div class="activity-item">
+                                <div class="activity-item" style="cursor: pointer;" onclick="window.location.hash='#papers'">
                                     <div class="activity-dot dot-green"></div>
                                     <div class="activity-content">
                                         <p>Chen L. added a comment on Transformer paper</p>
                                         <span class="activity-time">2 hours ago</span>
                                     </div>
                                 </div>
-                                <div class="activity-item">
+                                <div class="activity-item" style="cursor: pointer;" onclick="window.location.hash='#citations'">
                                     <div class="activity-dot dot-blue"></div>
                                     <div class="activity-content">
                                         <p>New citation from ICML 2025 paper</p>
@@ -128,7 +141,7 @@
             <div id="view-papers" class="view-section">
                 <div class="section-header">
                     <h2>Version History: Quantum Computing for Optimization</h2>
-                    <button class="btn-primary" style="padding: 6px 16px; font-size: 13px;">Create new branch</button>
+                    <button class="btn-primary" onclick="openModal('create-branch-modal')" style="padding: 6px 16px; font-size: 13px;">Create new branch</button>
                 </div>
                 <div class="version-split">
                     <div class="commit-history" id="commit-history">
@@ -148,6 +161,32 @@
                 </div>
             </div>
             
+            <!-- Phase 4: Dynamic Paper Detail View -->
+            <div id="view-paper-detail" class="view-section">
+                <div class="section-header" style="margin-bottom: 24px;">
+                    <a href="#dashboard" style="color: var(--accent-green); text-decoration: none; font-size: 14px; margin-bottom: 12px; display: inline-block;">← Back to Dashboard</a>
+                    <h2 id="detail-title">Loading...</h2>
+                    <p class="text-secondary" id="detail-meta">Loading authors...</p>
+                </div>
+                <div class="card" style="margin-bottom: 24px;">
+                    <h3>Abstract</h3>
+                    <p id="detail-abstract" style="color: var(--text-secondary); line-height: 1.6; margin-top: 12px;">No abstract available.</p>
+                </div>
+                <button class="btn-primary" onclick="openModal('editor-modal')">Open in Collaborative Editor</button>
+            </div>
+            
+            <!-- Phase 8: Interactive Dataset Detail View -->
+            <div id="view-dataset-detail" class="view-section">
+                <div class="section-header" style="margin-bottom: 24px;">
+                    <a href="#datasets" style="color: var(--accent-green); text-decoration: none; font-size: 14px; margin-bottom: 12px; display: inline-block;">← Back to Datasets</a>
+                    <h2 id="ds-title">Dataset Visualizer</h2>
+                    <p class="text-secondary" id="ds-meta">Loading...</p>
+                </div>
+                <div class="card" style="margin-bottom: 24px; padding: 40px; background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                    <canvas id="datasetChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+
             <!-- Kaggle-like Datasets -->
             <div id="view-datasets" class="view-section">
                 <div class="section-header">
@@ -173,16 +212,58 @@
             <div id="view-citations" class="view-section">
                 <div class="section-header">
                     <h2>Citation Impact Graph</h2>
+                    <p class="text-secondary" style="font-size: 13px;">Interactive visualization of your paper citations and network impact.</p>
                 </div>
-                <div class="citation-graph-placeholder">
-                    <p>Interactive Citation Network Visualization</p>
-                    <div style="width: 100px; height: 100px; border-radius: 50%; background-color: var(--accent-green); margin: 0 auto; opacity: 0.8; box-shadow: 0 0 40px var(--accent-green);"></div>
+                <div class="card" style="margin-top: 16px; padding: 0; overflow: hidden; height: 500px; position: relative;">
+                    <canvas id="citation-canvas" style="width: 100%; height: 100%; display: block;"></canvas>
+                </div>
+            </div>
+
+            <!-- Admin View -->
+            <div id="view-admin" class="view-section">
+                <div class="section-header">
+                    <h2>Admin Dashboard</h2>
+                    <p class="text-secondary" style="font-size: 13px;">Manage users and global content across the platform.</p>
+                </div>
+                
+                <div class="card" style="margin-top: 16px;">
+                    <h3>User Management (PostgreSQL)</h3>
+                    <div style="overflow-x: auto; margin-top: 16px;">
+                        <table style="width: 100%; text-align: left; border-collapse: collapse; font-size: 14px;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid var(--border-color); color: var(--text-secondary);">
+                                    <th style="padding: 12px; font-weight: 500;">Name</th>
+                                    <th style="padding: 12px; font-weight: 500;">Email</th>
+                                    <th style="padding: 12px; font-weight: 500;">Role</th>
+                                    <th style="padding: 12px; font-weight: 500;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-users-list">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </main>
     </div>
 
     <!-- Modals -->
+    <!-- Create Branch Modal -->
+    <div class="modal-overlay" id="create-branch-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create New Branch</h3>
+                <button class="close-btn" onclick="closeModal('create-branch-modal')">×</button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="new-branch-name" placeholder="Branch Name (e.g. experimental-fix)">
+                <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 24px;">This branch will track independent changes for this paper. You can merge it back into main later via Pull Request.</p>
+                <button class="btn-primary" style="width: 100%" id="btn-create-branch">Create Branch</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Create Paper Modal -->
     <div class="modal-overlay" id="create-paper-modal">
         <div class="modal-content">
@@ -191,9 +272,9 @@
                 <button class="close-btn" onclick="closeModal('create-paper-modal')">×</button>
             </div>
             <div class="modal-body">
-                <input type="text" id="new-paper-title" placeholder="Paper Title" style="width:100%; padding: 10px; margin-bottom: 16px; background: #2D2D2D; border: 1px solid var(--border-color); color: white; border-radius: 4px;">
-                <input type="text" id="new-paper-domain" placeholder="Domain (e.g. Computer Science)" style="width:100%; padding: 10px; margin-bottom: 16px; background: #2D2D2D; border: 1px solid var(--border-color); color: white; border-radius: 4px;">
-                <input type="text" id="new-paper-authors" placeholder="Authors (comma separated)" style="width:100%; padding: 10px; margin-bottom: 16px; background: #2D2D2D; border: 1px solid var(--border-color); color: white; border-radius: 4px;">
+                <input type="text" id="new-paper-title" placeholder="Paper Title">
+                <input type="text" id="new-paper-domain" placeholder="Domain (e.g. Computer Science)">
+                <input type="text" id="new-paper-authors" placeholder="Authors (comma separated)">
                 <button class="btn-primary" style="width: 100%" id="btn-submit-paper">Save Paper</button>
             </div>
         </div>
@@ -207,11 +288,13 @@
                 <button class="close-btn" onclick="closeModal('upload-modal')">×</button>
             </div>
             <div class="modal-body">
-                <input type="text" placeholder="Dataset Title" style="width:100%; padding: 10px; margin-bottom: 16px; background: #2D2D2D; border: 1px solid var(--border-color); color: white; border-radius: 4px;">
-                <div style="border: 2px dashed var(--border-color); padding: 40px; text-align: center; border-radius: 8px; margin-bottom: 16px; color: var(--text-secondary);">
-                    Drag and drop your JSON/CSV/FASTA file here
+                <input type="text" id="new-dataset-title" placeholder="Dataset Title">
+                <div class="upload-zone" style="border: 2px dashed var(--border-color); padding: 40px; text-align: center; border-radius: 8px; margin-bottom: 16px; color: var(--text-secondary); cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='var(--accent-green)'; this.style.backgroundColor='rgba(46,160,113,0.05)';" onmouseout="this.style.borderColor='var(--border-color)'; this.style.backgroundColor='transparent';">
+                    <span style="font-size: 24px; display: block; margin-bottom: 8px;">📥</span>
+                    Drag and drop your JSON/CSV/FASTA file here<br>
+                    <span style="font-size: 12px; opacity: 0.7;">or click to browse</span>
                 </div>
-                <button class="btn-primary" style="width: 100%" onclick="closeModal('upload-modal')">Upload File</button>
+                <button class="btn-primary" style="width: 100%" id="btn-upload-dataset">Upload File</button>
             </div>
         </div>
     </div>
@@ -223,15 +306,19 @@
                 <h3>Data Preview</h3>
                 <button class="close-btn" onclick="closeModal('preview-modal')">×</button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="padding: 0; max-height: 400px; overflow-y: auto;">
                 <table style="width: 100%; text-align: left; border-collapse: collapse; font-size: 13px;">
-                    <thead style="background: var(--bg-app);">
-                        <tr><th style="padding: 10px; border-bottom: 1px solid var(--border-color);">qubit_id</th><th style="padding: 10px; border-bottom: 1px solid var(--border-color);">error_rate</th><th style="padding: 10px; border-bottom: 1px solid var(--border-color);">timestamp</th></tr>
+                    <thead style="background: var(--bg-surface); position: sticky; top: 0; box-shadow: 0 1px 0 var(--border-color);">
+                        <tr>
+                            <th style="padding: 12px 16px; color: var(--text-secondary); font-weight: 500;">qubit_id</th>
+                            <th style="padding: 12px 16px; color: var(--text-secondary); font-weight: 500;">error_rate</th>
+                            <th style="padding: 12px 16px; color: var(--text-secondary); font-weight: 500;">timestamp</th>
+                        </tr>
                     </thead>
                     <tbody>
-                        <tr><td style="padding: 10px; border-bottom: 1px solid var(--border-color);">q_001</td><td style="padding: 10px; border-bottom: 1px solid var(--border-color);">0.0024</td><td style="padding: 10px; border-bottom: 1px solid var(--border-color);">2025-10-12T08:00:00Z</td></tr>
-                        <tr><td style="padding: 10px; border-bottom: 1px solid var(--border-color);">q_002</td><td style="padding: 10px; border-bottom: 1px solid var(--border-color);">0.0019</td><td style="padding: 10px; border-bottom: 1px solid var(--border-color);">2025-10-12T08:00:05Z</td></tr>
-                        <tr><td style="padding: 10px; border-bottom: 1px solid var(--border-color);">q_003</td><td style="padding: 10px; border-bottom: 1px solid var(--border-color);">0.0041</td><td style="padding: 10px; border-bottom: 1px solid var(--border-color);">2025-10-12T08:00:10Z</td></tr>
+                        <tr style="border-bottom: 1px solid var(--border-color); transition: background 0.2s;" onmouseover="this.style.background='var(--bg-card)'" onmouseout="this.style.background='transparent'"><td style="padding: 12px 16px; font-family: monospace;">q_001</td><td style="padding: 12px 16px; font-family: monospace;">0.0024</td><td style="padding: 12px 16px; font-family: monospace;">2025-10-12T08:00:00Z</td></tr>
+                        <tr style="border-bottom: 1px solid var(--border-color); transition: background 0.2s;" onmouseover="this.style.background='var(--bg-card)'" onmouseout="this.style.background='transparent'"><td style="padding: 12px 16px; font-family: monospace;">q_002</td><td style="padding: 12px 16px; font-family: monospace;">0.0019</td><td style="padding: 12px 16px; font-family: monospace;">2025-10-12T08:00:05Z</td></tr>
+                        <tr style="border-bottom: 1px solid var(--border-color); transition: background 0.2s;" onmouseover="this.style.background='var(--bg-card)'" onmouseout="this.style.background='transparent'"><td style="padding: 12px 16px; font-family: monospace;">q_003</td><td style="padding: 12px 16px; font-family: monospace;">0.0041</td><td style="padding: 12px 16px; font-family: monospace;">2025-10-12T08:00:10Z</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -256,9 +343,11 @@
                     <option value="7">Huge</option>
                 </select>
                 <input type="color" class="btn-outline" style="width: 32px; height: 32px; padding: 2px; cursor: pointer;" onchange="document.execCommand('foreColor', false, this.value)" title="Text Color">
+                <button class="btn-outline" style="width: auto;" onclick="window.callAIAssistant(event)">✨ AI Magic</button>
                 <button class="btn-outline" style="width: auto;">Cite Source</button>
+                <button class="btn-outline" style="width: auto; padding: 6px 16px; font-size: 13px;" onclick="window.exportToPDF()">Export PDF</button>
                 <button class="btn-primary" style="width: auto; padding: 6px 16px; font-size: 13px;" onclick="saveDocument()">Save Changes</button>
-                <span style="margin-left: auto; color: var(--text-secondary); font-size: 12px; display: flex; align-items: center;">🟢 Devon Lane is typing...</span>
+                <span id="typing-indicator" style="margin-left: auto; color: var(--text-secondary); font-size: 12px; display: none; align-items: center;"></span>
             </div>
             <div class="modal-body" style="flex: 1; padding: 40px; background: #E8E8E8; color: #111; overflow-y: auto;">
                 <div contenteditable="true" style="background: white; padding: 60px; min-height: 100%; box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-family: serif; font-size: 16px; line-height: 1.8; outline: none;">
@@ -281,7 +370,14 @@
             alert("Document saved successfully! Version history updated.");
             closeModal('editor-modal');
         }
+        function logout() {
+            localStorage.removeItem('user');
+            window.location.href = '/login.html';
+        }
     </script>
-    <script src="/js/app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="/js/app.js?v=3"></script>
 </body>
 </html>
