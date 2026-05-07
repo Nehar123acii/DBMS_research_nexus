@@ -93,8 +93,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     const paper = papers.find(p => p.id === paperId || p._id === paperId);
                     if (paper) {
                         document.getElementById('detail-title').textContent = paper.title;
-                        document.getElementById('detail-meta').textContent = `By ${paper.authors.join(', ')} • ${paper.citations} Citations`;
+                        document.getElementById('detail-meta').textContent = `By ${paper.authors.join(', ')} • ${paper.citations || 0} Citations`;
                         document.getElementById('detail-abstract').textContent = "This is a detailed abstract generated dynamically. " + paper.title + " explores groundbreaking methodologies...";
+                        
+                        const dlContainer = document.getElementById('paper-download-container');
+                        if (dlContainer) {
+                            if (paper.filePath) {
+                                dlContainer.innerHTML = `<a href="${paper.filePath}" download class="btn-outline" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-size: 13px;">📥 Download Original File</a>`;
+                            } else {
+                                dlContainer.innerHTML = '';
+                            }
+                        }
                     }
                 });
             return;
@@ -128,16 +137,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // Mock dynamic data based on ID
                 const dataVals = [Math.floor(Math.random()*20), Math.floor(Math.random()*20), Math.floor(Math.random()*20), Math.floor(Math.random()*20), Math.floor(Math.random()*20)];
+                const labels = ['Sample A', 'Sample B', 'Sample C', 'Sample D', 'Sample E'];
+                
+                const rawData = labels.map((label, index) => ({
+                    sampleName: label,
+                    metricValue: dataVals[index],
+                    timestamp: new Date().toISOString()
+                }));
+                const rawContainer = document.getElementById('raw-data-content');
+                if (rawContainer) {
+                    rawContainer.textContent = JSON.stringify(rawData, null, 2);
+                }
                 
                 window.datasetChartInstance = new Chart(ctx, {
                     type: 'bar',
                     data: {
-                        labels: ['Sample A', 'Sample B', 'Sample C', 'Sample D', 'Sample E'],
+                        labels: labels,
                         datasets: [{
                             label: 'Distribution Metric',
                             data: dataVals,
-                            backgroundColor: 'rgba(2, 132, 199, 0.6)',
-                            borderColor: 'rgba(2, 132, 199, 1)',
+                            backgroundColor: 'rgba(161, 27, 53, 0.6)', // Crimson Theme
+                            borderColor: 'rgba(161, 27, 53, 1)',
                             borderWidth: 1,
                             borderRadius: 4
                         }]
@@ -250,12 +270,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const authors = authorsStr.split(',').map(a => a.trim());
+            const fileInput = document.getElementById('new-paper-file');
+            
+            const formData = new FormData();
+            formData.append('title', title);
+            formData.append('domain', domain);
+            formData.append('authors', authorsStr);
+            if (fileInput && fileInput.files.length > 0) {
+                formData.append('file', fileInput.files[0]);
+            }
 
             fetch('/api/papers', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, domain, authors })
+                body: formData
             })
             .then(res => res.json())
             .then(newPaper => {
@@ -303,13 +330,40 @@ document.addEventListener('DOMContentLoaded', () => {
     const diffContent = document.getElementById('diff-content');
     const diffTitle = document.getElementById('diff-title');
 
-    const fetchVersions = () => {
+    const paperSelect = document.getElementById('version-paper-select');
+    if (paperSelect) {
+        window.fetch('/api/papers')
+            .then(res => res.json())
+            .then(papers => {
+                paperSelect.innerHTML = '<option value="all">All Papers</option>';
+                papers.forEach(p => {
+                    const opt = document.createElement('option');
+                    opt.value = p.id || p._id || p.title;
+                    opt.textContent = p.title;
+                    paperSelect.appendChild(opt);
+                });
+            });
+            
+        paperSelect.addEventListener('change', () => fetchVersions(paperSelect.value));
+    }
+
+    const fetchVersions = (filterPaperId = 'all') => {
         if (!commitContainer) return;
-        fetch('/api/versions')
+        window.fetch('/api/versions')
             .then(res => res.json())
             .then(versions => {
                 commitContainer.innerHTML = '';
-                versions.forEach(v => {
+                diffContent.innerHTML = '<div style="color: var(--text-secondary); text-align: center; padding: 40px;">No commit selected</div>';
+                diffTitle.textContent = 'Select a commit to view changes';
+                
+                const filteredVersions = filterPaperId === 'all' ? versions : versions.filter(v => (v.paperId === filterPaperId) || (v.paperTitle === filterPaperId));
+                
+                if (filteredVersions.length === 0) {
+                    commitContainer.innerHTML = '<div style="padding: 20px; color: var(--text-secondary);">No commits found.</div>';
+                    return;
+                }
+                
+                filteredVersions.forEach(v => {
                     const item = document.createElement('div');
                     item.className = 'commit-item';
                     item.innerHTML = `
@@ -415,7 +469,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 7. Citation Graph Logic
-    const initCitationGraph = () => {
+    const initCitationGraph = async () => {
         const canvas = document.getElementById('citation-canvas');
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
@@ -432,62 +486,88 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         resizeObserver.observe(canvas.parentElement);
         
-        const numNodes = 45;
-        const nodes = Array.from({length: numNodes}, (_, i) => ({
-            id: i,
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            vx: (Math.random() - 0.5) * 1.2,
-            vy: (Math.random() - 0.5) * 1.2,
-            radius: i === 0 ? 14 : Math.random() * 4 + 3,
-            color: i === 0 ? '#2ea071' : (Math.random() > 0.7 ? '#60A5FA' : '#9CA3AF')
-        }));
-        
-        const edges = [];
-        for (let i = 1; i < nodes.length; i++) {
-            if (Math.random() > 0.5) edges.push({ source: nodes[i], target: nodes[Math.floor(Math.random() * i)] });
-            if (Math.random() > 0.6) edges.push({ source: nodes[i], target: nodes[0] });
-        }
-        
-        const animate = () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        try {
+            const res = await window.fetch('/api/papers');
+            const papers = await res.json();
             
-            nodes.forEach(n => {
-                n.x += n.vx;
-                n.y += n.vy;
-                if (n.x < 0 || n.x > canvas.width) n.vx *= -1;
-                if (n.y < 0 || n.y > canvas.height) n.vy *= -1;
+            const nodes = [{
+                id: 'center',
+                label: 'You',
+                x: canvas.width / 2,
+                y: canvas.height / 2,
+                vx: 0,
+                vy: 0,
+                radius: 16,
+                color: 'var(--accent-green)'
+            }];
+            
+            papers.forEach((p, i) => {
+                nodes.push({
+                    id: p.id || p._id || i,
+                    label: p.title,
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 1.5,
+                    vy: (Math.random() - 0.5) * 1.5,
+                    radius: Math.max(4, Math.min(12, (p.citations || 10) / 5)),
+                    color: Math.random() > 0.5 ? 'var(--accent-blue)' : '#9CA3AF'
+                });
             });
             
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-            ctx.lineWidth = 1;
-            edges.forEach(e => {
-                ctx.beginPath();
-                ctx.moveTo(e.source.x, e.source.y);
-                ctx.lineTo(e.target.x, e.target.y);
-                ctx.stroke();
-            });
-            
-            nodes.forEach(n => {
-                ctx.beginPath();
-                ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
-                ctx.fillStyle = n.color;
-                if (n.id === 0) {
-                    ctx.shadowBlur = 20;
-                    ctx.shadowColor = n.color;
-                } else {
-                    ctx.shadowBlur = 0;
+            const edges = [];
+            for (let i = 1; i < nodes.length; i++) {
+                edges.push({ source: nodes[i], target: nodes[0] });
+                if (Math.random() > 0.6 && i > 1) {
+                    edges.push({ source: nodes[i], target: nodes[Math.floor(Math.random() * (i-1)) + 1] });
                 }
-                ctx.fill();
-            });
-            ctx.shadowBlur = 0;
+            }
             
-            requestAnimationFrame(animate);
-        };
-        animate();
+            const animate = () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                nodes.forEach(n => {
+                    if (n.id !== 'center') {
+                        n.x += n.vx;
+                        n.y += n.vy;
+                        if (n.x < 0 || n.x > canvas.width) n.vx *= -1;
+                        if (n.y < 0 || n.y > canvas.height) n.vy *= -1;
+                    } else {
+                        n.x = canvas.width / 2;
+                        n.y = canvas.height / 2;
+                    }
+                });
+                
+                ctx.strokeStyle = 'rgba(161, 27, 53, 0.15)';
+                ctx.lineWidth = 1;
+                edges.forEach(e => {
+                    ctx.beginPath();
+                    ctx.moveTo(e.source.x, e.source.y);
+                    ctx.lineTo(e.target.x, e.target.y);
+                    ctx.stroke();
+                });
+                
+                nodes.forEach(n => {
+                    ctx.beginPath();
+                    ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = n.id === 'center' ? '#A11B35' : (n.color.startsWith('var') ? '#8A1538' : n.color);
+                    if (n.id === 'center') {
+                        ctx.shadowBlur = 15;
+                        ctx.shadowColor = '#A11B35';
+                    } else {
+                        ctx.shadowBlur = 0;
+                    }
+                    ctx.fill();
+                });
+                ctx.shadowBlur = 0;
+                
+                requestAnimationFrame(animate);
+            };
+            animate();
+        } catch(err) {
+            console.error(err);
+        }
     };
-
-    initCitationGraph();
+    setTimeout(initCitationGraph, 500);
 
     // 8. Admin View Logic
     window.fetchAdminUsers = async () => {

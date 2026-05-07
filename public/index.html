@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css">
 </head>
+
 <body>
     <script>
         // Protect route
@@ -20,12 +22,16 @@
     <!-- Top Navigation -->
     <header class="top-nav">
         <div class="logo">
-            <span class="logo-icon">→</span> ResearchNexus
+            <img src="/img/logo.png" alt="RN Logo" style="height: 36px; width: auto; object-fit: contain;">
+            <span
+                style="color: var(--accent-green); font-weight: 700; font-size: 22px; letter-spacing: -0.5px;">ResearchNexus</span>
         </div>
         <div class="user-profile">
             <span id="user-name" class="user-name">Loading...</span>
             <div id="user-initials" class="user-initials"></div>
-            <button class="btn-outline" style="margin-left: 16px; font-size: 12px; padding: 6px 12px; border-color: var(--border-color); color: var(--text-secondary);" onclick="logout()">Logout</button>
+            <button class="btn-outline"
+                style="margin-left: 16px; font-size: 12px; padding: 6px 12px; border-color: var(--border-color); color: var(--text-secondary);"
+                onclick="logout()">Logout</button>
         </div>
     </header>
 
@@ -58,16 +64,20 @@
         <!-- Main Content -->
         <main class="main-content">
             <div id="view-dashboard" class="view-section active-view">
-                <div class="greeting-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <div class="greeting-header"
+                    style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
                     <div>
                         <h1 id="greeting">Good morning, Priya</h1>
                         <p class="greeting-subtext">3 papers awaiting your review • 2 collaboration invites</p>
                     </div>
                     <div style="display: flex; align-items: center; gap: 20px;">
-                        <input type="text" id="global-search" placeholder="Search papers, datasets..." style="padding: 10px 16px; border-radius: 20px; border: 1px solid var(--border-color); background: var(--bg-nav); color: var(--text-primary); width: 280px; font-size: 13px; outline: none;">
-                        <div style="position: relative; cursor: pointer; padding: 8px;" id="notification-bell" onclick="alert('You have new notifications!')">
+                        <input type="text" id="global-search" placeholder="Search papers, datasets..."
+                            style="padding: 10px 16px; border-radius: 20px; border: 1px solid var(--border-color); background: var(--bg-nav); color: var(--text-primary); width: 280px; font-size: 13px; outline: none;">
+                        <div style="position: relative; cursor: pointer; padding: 8px;" id="notification-bell"
+                            onclick="alert('You have new notifications!')">
                             <span style="font-size: 20px; filter: grayscale(1);">🔔</span>
-                            <span id="notif-badge" style="position: absolute; top: 2px; right: 2px; background: #ef4444; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 11px; display: none; align-items: center; justify-content: center; font-weight: bold; box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);">0</span>
+                            <span id="notif-badge"
+                                style="position: absolute; top: 2px; right: 2px; background: #ef4444; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 11px; display: none; align-items: center; justify-content: center; font-weight: bold; box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);">0</span>
                         </div>
                     </div>
                 </div>
@@ -97,14 +107,15 @@
                     <div class="recent-papers-section">
                         <div class="section-header">
                             <h2>Recent papers</h2>
-                            <button class="btn-primary" onclick="openModal('create-paper-modal')" style="padding: 6px 16px; font-size: 13px;">+ Create New Paper</button>
+                            <button class="btn-primary" onclick="openModal('create-paper-modal')"
+                                style="padding: 6px 16px; font-size: 13px;">+ Create New Paper</button>
                             <div class="filter-tabs">
                                 <button class="filter-tab active">All</button>
                                 <button class="filter-tab">Mine</button>
                                 <button class="filter-tab">Shared</button>
                             </div>
                         </div>
-                        
+
                         <div class="papers-list" id="papers-list">
                             <!-- Paper cards injected via JS -->
                         </div>
@@ -117,14 +128,16 @@
                         </div>
                         <div class="activity-card">
                             <div class="activity-feed">
-                                <div class="activity-item" style="cursor: pointer;" onclick="window.location.hash='#papers'">
+                                <div class="activity-item" style="cursor: pointer;"
+                                    onclick="window.location.hash='#papers'">
                                     <div class="activity-dot dot-green"></div>
                                     <div class="activity-content">
                                         <p>Chen L. added a comment on Transformer paper</p>
                                         <span class="activity-time">2 hours ago</span>
                                     </div>
                                 </div>
-                                <div class="activity-item" style="cursor: pointer;" onclick="window.location.hash='#citations'">
+                                <div class="activity-item" style="cursor: pointer;"
+                                    onclick="window.location.hash='#citations'">
                                     <div class="activity-dot dot-blue"></div>
                                     <div class="activity-content">
                                         <p>New citation from ICML 2025 paper</p>
@@ -140,8 +153,15 @@
             <!-- GitHub-like Version History (Papers) -->
             <div id="view-papers" class="view-section">
                 <div class="section-header">
-                    <h2>Version History: Quantum Computing for Optimization</h2>
-                    <button class="btn-primary" onclick="openModal('create-branch-modal')" style="padding: 6px 16px; font-size: 13px;">Create new branch</button>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <h2>Version History:</h2>
+                        <select id="version-paper-select" class="btn-outline"
+                            style="padding: 6px 12px; font-size: 16px; font-weight: 600; border-color: var(--border-color); background: var(--bg-surface); color: var(--text-primary); outline: none;">
+                            <option value="">Loading papers...</option>
+                        </select>
+                    </div>
+                    <button class="btn-primary" onclick="openModal('create-branch-modal')"
+                        style="padding: 6px 16px; font-size: 13px;">Create new branch</button>
                 </div>
                 <div class="version-split">
                     <div class="commit-history" id="commit-history">
@@ -160,30 +180,50 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Phase 4: Dynamic Paper Detail View -->
             <div id="view-paper-detail" class="view-section">
                 <div class="section-header" style="margin-bottom: 24px;">
-                    <a href="#dashboard" style="color: var(--accent-green); text-decoration: none; font-size: 14px; margin-bottom: 12px; display: inline-block;">← Back to Dashboard</a>
+                    <a href="#dashboard"
+                        style="color: var(--accent-green); text-decoration: none; font-size: 14px; margin-bottom: 12px; display: inline-block;">←
+                        Back to Dashboard</a>
                     <h2 id="detail-title">Loading...</h2>
                     <p class="text-secondary" id="detail-meta">Loading authors...</p>
                 </div>
                 <div class="card" style="margin-bottom: 24px;">
                     <h3>Abstract</h3>
-                    <p id="detail-abstract" style="color: var(--text-secondary); line-height: 1.6; margin-top: 12px;">No abstract available.</p>
+                    <p id="detail-abstract" style="color: var(--text-secondary); line-height: 1.6; margin-top: 12px;">No
+                        abstract available.</p>
+                    <div id="paper-download-container" style="margin-top: 20px;"></div>
                 </div>
                 <button class="btn-primary" onclick="openModal('editor-modal')">Open in Collaborative Editor</button>
             </div>
-            
+
             <!-- Phase 8: Interactive Dataset Detail View -->
             <div id="view-dataset-detail" class="view-section">
                 <div class="section-header" style="margin-bottom: 24px;">
-                    <a href="#datasets" style="color: var(--accent-green); text-decoration: none; font-size: 14px; margin-bottom: 12px; display: inline-block;">← Back to Datasets</a>
+                    <a href="#datasets"
+                        style="color: var(--accent-green); text-decoration: none; font-size: 14px; margin-bottom: 12px; display: inline-block;">←
+                        Back to Datasets</a>
                     <h2 id="ds-title">Dataset Visualizer</h2>
                     <p class="text-secondary" id="ds-meta">Loading...</p>
                 </div>
-                <div class="card" style="margin-bottom: 24px; padding: 40px; background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                <div class="card"
+                    style="margin-bottom: 24px; padding: 40px; background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3 style="margin: 0;">Visualization</h3>
+                        <button class="btn-outline" style="padding: 6px 12px; font-size: 13px;"
+                            onclick="document.getElementById('raw-dataset-data').style.display = document.getElementById('raw-dataset-data').style.display === 'none' ? 'block' : 'none'">View
+                            Raw Data</button>
+                    </div>
                     <canvas id="datasetChart" width="400" height="200"></canvas>
+                </div>
+                <div id="raw-dataset-data" class="card"
+                    style="display: none; background: #F8F9FA; border: 1px solid var(--border-color); margin-bottom: 24px;">
+                    <h3 style="margin-bottom: 12px; font-size: 14px;">Raw Dataset Content</h3>
+                    <pre id="raw-data-content"
+                        style="font-family: monospace; font-size: 13px; color: var(--text-secondary); white-space: pre-wrap; word-wrap: break-word;">Loading...</pre>
                 </div>
             </div>
 
@@ -191,7 +231,8 @@
             <div id="view-datasets" class="view-section">
                 <div class="section-header">
                     <h2>Public Datasets</h2>
-                    <button class="btn-primary" onclick="openModal('upload-modal')" style="padding: 6px 16px; font-size: 13px;">+ Upload Dataset</button>
+                    <button class="btn-primary" onclick="openModal('upload-modal')"
+                        style="padding: 6px 16px; font-size: 13px;">+ Upload Dataset</button>
                 </div>
                 <div class="datasets-grid" id="datasets-grid">
                     <!-- Datasets injected via JS -->
@@ -212,9 +253,11 @@
             <div id="view-citations" class="view-section">
                 <div class="section-header">
                     <h2>Citation Impact Graph</h2>
-                    <p class="text-secondary" style="font-size: 13px;">Interactive visualization of your paper citations and network impact.</p>
+                    <p class="text-secondary" style="font-size: 13px;">Interactive visualization of your paper citations
+                        and network impact.</p>
                 </div>
-                <div class="card" style="margin-top: 16px; padding: 0; overflow: hidden; height: 500px; position: relative;">
+                <div class="card"
+                    style="margin-top: 16px; padding: 0; overflow: hidden; height: 500px; position: relative;">
                     <canvas id="citation-canvas" style="width: 100%; height: 100%; display: block;"></canvas>
                 </div>
             </div>
@@ -223,9 +266,10 @@
             <div id="view-admin" class="view-section">
                 <div class="section-header">
                     <h2>Admin Dashboard</h2>
-                    <p class="text-secondary" style="font-size: 13px;">Manage users and global content across the platform.</p>
+                    <p class="text-secondary" style="font-size: 13px;">Manage users and global content across the
+                        platform.</p>
                 </div>
-                
+
                 <div class="card" style="margin-top: 16px;">
                     <h3>User Management (PostgreSQL)</h3>
                     <div style="overflow-x: auto; margin-top: 16px;">
@@ -258,7 +302,8 @@
             </div>
             <div class="modal-body">
                 <input type="text" id="new-branch-name" placeholder="Branch Name (e.g. experimental-fix)">
-                <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 24px;">This branch will track independent changes for this paper. You can merge it back into main later via Pull Request.</p>
+                <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 24px;">This branch will track
+                    independent changes for this paper. You can merge it back into main later via Pull Request.</p>
                 <button class="btn-primary" style="width: 100%" id="btn-create-branch">Create Branch</button>
             </div>
         </div>
@@ -275,6 +320,8 @@
                 <input type="text" id="new-paper-title" placeholder="Paper Title">
                 <input type="text" id="new-paper-domain" placeholder="Domain (e.g. Computer Science)">
                 <input type="text" id="new-paper-authors" placeholder="Authors (comma separated)">
+                <label for="new-paper-file" style="display: block; font-size: 13px; font-weight: 500; margin-bottom: 8px;">Upload Original PDF (Optional)</label>
+                <input type="file" id="new-paper-file" accept=".pdf,.doc,.docx" style="margin-bottom: 24px; width: 100%; border: 1px dashed var(--border-color); padding: 8px; border-radius: 6px;">
                 <button class="btn-primary" style="width: 100%" id="btn-submit-paper">Save Paper</button>
             </div>
         </div>
@@ -289,7 +336,10 @@
             </div>
             <div class="modal-body">
                 <input type="text" id="new-dataset-title" placeholder="Dataset Title">
-                <div class="upload-zone" style="border: 2px dashed var(--border-color); padding: 40px; text-align: center; border-radius: 8px; margin-bottom: 16px; color: var(--text-secondary); cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='var(--accent-green)'; this.style.backgroundColor='rgba(46,160,113,0.05)';" onmouseout="this.style.borderColor='var(--border-color)'; this.style.backgroundColor='transparent';">
+                <div class="upload-zone"
+                    style="border: 2px dashed var(--border-color); padding: 40px; text-align: center; border-radius: 8px; margin-bottom: 16px; color: var(--text-secondary); cursor: pointer; transition: all 0.2s;"
+                    onmouseover="this.style.borderColor='var(--accent-green)'; this.style.backgroundColor='rgba(46,160,113,0.05)';"
+                    onmouseout="this.style.borderColor='var(--border-color)'; this.style.backgroundColor='transparent';">
                     <span style="font-size: 24px; display: block; margin-bottom: 8px;">📥</span>
                     Drag and drop your JSON/CSV/FASTA file here<br>
                     <span style="font-size: 12px; opacity: 0.7;">or click to browse</span>
@@ -308,17 +358,39 @@
             </div>
             <div class="modal-body" style="padding: 0; max-height: 400px; overflow-y: auto;">
                 <table style="width: 100%; text-align: left; border-collapse: collapse; font-size: 13px;">
-                    <thead style="background: var(--bg-surface); position: sticky; top: 0; box-shadow: 0 1px 0 var(--border-color);">
+                    <thead
+                        style="background: var(--bg-surface); position: sticky; top: 0; box-shadow: 0 1px 0 var(--border-color);">
                         <tr>
-                            <th style="padding: 12px 16px; color: var(--text-secondary); font-weight: 500;">qubit_id</th>
-                            <th style="padding: 12px 16px; color: var(--text-secondary); font-weight: 500;">error_rate</th>
-                            <th style="padding: 12px 16px; color: var(--text-secondary); font-weight: 500;">timestamp</th>
+                            <th style="padding: 12px 16px; color: var(--text-secondary); font-weight: 500;">qubit_id
+                            </th>
+                            <th style="padding: 12px 16px; color: var(--text-secondary); font-weight: 500;">error_rate
+                            </th>
+                            <th style="padding: 12px 16px; color: var(--text-secondary); font-weight: 500;">timestamp
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr style="border-bottom: 1px solid var(--border-color); transition: background 0.2s;" onmouseover="this.style.background='var(--bg-card)'" onmouseout="this.style.background='transparent'"><td style="padding: 12px 16px; font-family: monospace;">q_001</td><td style="padding: 12px 16px; font-family: monospace;">0.0024</td><td style="padding: 12px 16px; font-family: monospace;">2025-10-12T08:00:00Z</td></tr>
-                        <tr style="border-bottom: 1px solid var(--border-color); transition: background 0.2s;" onmouseover="this.style.background='var(--bg-card)'" onmouseout="this.style.background='transparent'"><td style="padding: 12px 16px; font-family: monospace;">q_002</td><td style="padding: 12px 16px; font-family: monospace;">0.0019</td><td style="padding: 12px 16px; font-family: monospace;">2025-10-12T08:00:05Z</td></tr>
-                        <tr style="border-bottom: 1px solid var(--border-color); transition: background 0.2s;" onmouseover="this.style.background='var(--bg-card)'" onmouseout="this.style.background='transparent'"><td style="padding: 12px 16px; font-family: monospace;">q_003</td><td style="padding: 12px 16px; font-family: monospace;">0.0041</td><td style="padding: 12px 16px; font-family: monospace;">2025-10-12T08:00:10Z</td></tr>
+                        <tr style="border-bottom: 1px solid var(--border-color); transition: background 0.2s;"
+                            onmouseover="this.style.background='var(--bg-card)'"
+                            onmouseout="this.style.background='transparent'">
+                            <td style="padding: 12px 16px; font-family: monospace;">q_001</td>
+                            <td style="padding: 12px 16px; font-family: monospace;">0.0024</td>
+                            <td style="padding: 12px 16px; font-family: monospace;">2025-10-12T08:00:00Z</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-color); transition: background 0.2s;"
+                            onmouseover="this.style.background='var(--bg-card)'"
+                            onmouseout="this.style.background='transparent'">
+                            <td style="padding: 12px 16px; font-family: monospace;">q_002</td>
+                            <td style="padding: 12px 16px; font-family: monospace;">0.0019</td>
+                            <td style="padding: 12px 16px; font-family: monospace;">2025-10-12T08:00:05Z</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-color); transition: background 0.2s;"
+                            onmouseover="this.style.background='var(--bg-card)'"
+                            onmouseout="this.style.background='transparent'">
+                            <td style="padding: 12px 16px; font-family: monospace;">q_003</td>
+                            <td style="padding: 12px 16px; font-family: monospace;">0.0041</td>
+                            <td style="padding: 12px 16px; font-family: monospace;">2025-10-12T08:00:10Z</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -332,27 +404,39 @@
                 <h3>Collaborative Editor (Google Docs style)</h3>
                 <button class="close-btn" onclick="closeModal('editor-modal')">×</button>
             </div>
-            <div class="editor-toolbar" style="padding: 10px; border-bottom: 1px solid var(--border-color); display: flex; gap: 10px; align-items: center; background: var(--bg-app);">
-                <button class="btn-outline" style="width: auto;" onclick="document.execCommand('bold', false, null)">Bold</button>
-                <button class="btn-outline" style="width: auto;" onclick="document.execCommand('italic', false, null)">Italic</button>
-                <select class="btn-outline" style="width: auto; padding: 4px 8px;" onchange="document.execCommand('fontSize', false, this.value); this.selectedIndex=0;">
+            <div class="editor-toolbar"
+                style="padding: 10px; border-bottom: 1px solid var(--border-color); display: flex; gap: 10px; align-items: center; background: var(--bg-app);">
+                <button class="btn-outline" style="width: auto;"
+                    onclick="document.execCommand('bold', false, null)">Bold</button>
+                <button class="btn-outline" style="width: auto;"
+                    onclick="document.execCommand('italic', false, null)">Italic</button>
+                <select class="btn-outline" style="width: auto; padding: 4px 8px;"
+                    onchange="document.execCommand('fontSize', false, this.value); this.selectedIndex=0;">
                     <option value="" disabled selected>Size</option>
                     <option value="2">Small</option>
                     <option value="3">Normal</option>
                     <option value="5">Large</option>
                     <option value="7">Huge</option>
                 </select>
-                <input type="color" class="btn-outline" style="width: 32px; height: 32px; padding: 2px; cursor: pointer;" onchange="document.execCommand('foreColor', false, this.value)" title="Text Color">
-                <button class="btn-outline" style="width: auto;" onclick="window.callAIAssistant(event)">✨ AI Magic</button>
+                <input type="color" class="btn-outline"
+                    style="width: 32px; height: 32px; padding: 2px; cursor: pointer;"
+                    onchange="document.execCommand('foreColor', false, this.value)" title="Text Color">
+                <button class="btn-outline" style="width: auto;" onclick="window.callAIAssistant(event)">✨ AI
+                    Magic</button>
                 <button class="btn-outline" style="width: auto;">Cite Source</button>
-                <button class="btn-outline" style="width: auto; padding: 6px 16px; font-size: 13px;" onclick="window.exportToPDF()">Export PDF</button>
-                <button class="btn-primary" style="width: auto; padding: 6px 16px; font-size: 13px;" onclick="saveDocument()">Save Changes</button>
-                <span id="typing-indicator" style="margin-left: auto; color: var(--text-secondary); font-size: 12px; display: none; align-items: center;"></span>
+                <button class="btn-outline" style="width: auto; padding: 6px 16px; font-size: 13px;"
+                    onclick="window.exportToPDF()">Export PDF</button>
+                <button class="btn-primary" style="width: auto; padding: 6px 16px; font-size: 13px;"
+                    onclick="saveDocument()">Save Changes</button>
+                <span id="typing-indicator"
+                    style="margin-left: auto; color: var(--text-secondary); font-size: 12px; display: none; align-items: center;"></span>
             </div>
             <div class="modal-body" style="flex: 1; padding: 40px; background: #E8E8E8; color: #111; overflow-y: auto;">
-                <div contenteditable="true" style="background: white; padding: 60px; min-height: 100%; box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-family: serif; font-size: 16px; line-height: 1.8; outline: none;">
+                <div contenteditable="true"
+                    style="background: white; padding: 60px; min-height: 100%; box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-family: serif; font-size: 16px; line-height: 1.8; outline: none;">
                     <h2>1. Introduction</h2>
-                    <p>The problem of quantum state decoherence remains one of the fundamental challenges in scaling quantum architectures...</p>
+                    <p>The problem of quantum state decoherence remains one of the fundamental challenges in scaling
+                        quantum architectures...</p>
                 </div>
             </div>
         </div>
@@ -380,4 +464,5 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="/js/app.js?v=3"></script>
 </body>
+
 </html>

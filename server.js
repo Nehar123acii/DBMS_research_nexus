@@ -9,6 +9,21 @@ const bcrypt = require('bcrypt');
 const { connectMongo, getMongoStatus } = require('./config/mongo');
 const pool = require('./config/postgres');
 const { Paper, Dataset, Review, Version } = require('./models/MongoModels');
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        const uploadDir = path.join(__dirname, 'public', 'uploads');
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir, { recursive: true });
+        }
+        cb(null, uploadDir);
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + '-' + file.originalname.replace(/[^a-zA-Z0-9.]/g, '_'));
+    }
+});
+const upload = multer({ storage });
 
 const app = express();
 const server = http.createServer(app);
@@ -144,10 +159,24 @@ app.get('/api/papers', async (req, res) => {
     res.json(readJsonFallback('papers.json'));
 });
 
-app.post('/api/papers', async (req, res) => {
+app.post('/api/papers', upload.single('file'), async (req, res) => {
+    let filePath = null;
+    if (req.file) {
+        filePath = '/uploads/' + req.file.filename;
+    }
+    
+    const paperData = {
+        title: req.body.title || 'Untitled',
+        domain: req.body.domain || 'Uncategorized',
+        rating: "0.0",
+        authors: typeof req.body.authors === 'string' ? req.body.authors.split(',').map(a=>a.trim()) : (req.body.authors || []),
+        date: new Date().toISOString().split('T')[0],
+        filePath: filePath
+    };
+
     if (getMongoStatus()) {
         try {
-            const newPaper = await Paper.create(req.body);
+            const newPaper = await Paper.create(paperData);
             return res.status(201).json(newPaper);
         } catch (err) { console.error(err); }
     }
@@ -157,11 +186,7 @@ app.post('/api/papers', async (req, res) => {
         const papers = readJsonFallback('papers.json');
         const newPaper = {
             id: Date.now().toString(),
-            title: req.body.title || 'Untitled',
-            domain: req.body.domain || 'Uncategorized',
-            rating: "0.0",
-            authors: req.body.authors || [],
-            date: new Date().toISOString().split('T')[0]
+            ...paperData
         };
         papers.unshift(newPaper); // Add to beginning
         fs.writeFileSync(path.join(__dirname, 'data', 'papers.json'), JSON.stringify(papers, null, 2));

@@ -1,10 +1,26 @@
 [
   {
+    "id": "1778139191898",
+    "title": "development of an object oriented DBMS",
+    "domain": "DBMS",
+    "rating": "0.0",
+    "authors": [
+      "D Maier",
+      "J Stein",
+      "A Otis",
+      "A Purdy"
+    ],
+    "date": "2026-05-07"
+  },
+  {
     "id": "1",
     "title": "Quantum Computing for Optimization",
     "domain": "Computer Science",
     "rating": "4.8",
-    "authors": ["Annette Black", "Devon Lane"],
+    "authors": [
+      "Annette Black",
+      "Devon Lane"
+    ],
     "date": "2026-04-15"
   },
   {
@@ -12,7 +28,9 @@
     "title": "Molecular Biology of the Cell",
     "domain": "Biology",
     "rating": "4.6",
-    "authors": ["Ralph Edwards"],
+    "authors": [
+      "Ralph Edwards"
+    ],
     "date": "2026-05-01"
   },
   {
@@ -20,7 +38,9 @@
     "title": "Transformer-based citation graph embeddings",
     "domain": "Artificial Intelligence",
     "rating": "4.9",
-    "authors": ["Priya Sharma"],
+    "authors": [
+      "Priya Sharma"
+    ],
     "date": "2026-05-03"
   },
   {
@@ -28,7 +48,10 @@
     "title": "Sustainable Supply Chain Models using Blockchain",
     "domain": "Economics",
     "rating": "4.5",
-    "authors": ["Devon Lane", "Arun Patel"],
+    "authors": [
+      "Devon Lane",
+      "Arun Patel"
+    ],
     "date": "2026-04-20"
   },
   {
@@ -36,7 +59,10 @@
     "title": "CRISPR-Cas9 Off-target Effects in Mammalian Cells",
     "domain": "Genetics",
     "rating": "4.7",
-    "authors": ["Ralph Edwards", "Sarah Chen"],
+    "authors": [
+      "Ralph Edwards",
+      "Sarah Chen"
+    ],
     "date": "2026-03-12"
   }
 ]
