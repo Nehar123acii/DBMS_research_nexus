@@ -715,12 +715,16 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 window.fetchAdminUsers = async () => {
+    const list = document.getElementById('admin-users-list');
+    if (!list) return;
+    
+    list.innerHTML = '<tr><td colspan="4" style="padding: 16px; text-align: center;">Loading users...</td></tr>';
+    
     try {
         const response = await fetch('/api/admin/users');
         const data = await response.json();
-        if (data.success && data.users) {
-            const list = document.getElementById('admin-users-list');
-            if (!list) return;
+        
+        if (data.success && data.users && data.users.length > 0) {
             list.innerHTML = '';
             data.users.forEach(u => {
                 const badgeClass = u.role === 'admin' ? 'badge-primary' : 'badge-secondary';
@@ -729,10 +733,10 @@ window.fetchAdminUsers = async () => {
                         <td style="padding: 12px; font-weight: 500;">
                             <div style="display: flex; align-items: center; gap: 8px;">
                                 <div class="avatar-small" style="width: 24px; height: 24px; font-size: 10px;">${(u.name || 'U').substring(0,2).toUpperCase()}</div>
-                                ${u.name}
+                                ${u.name || 'Unknown'}
                             </div>
                         </td>
-                        <td style="padding: 12px; color: var(--text-secondary);">${u.email}</td>
+                        <td style="padding: 12px; color: var(--text-secondary);">${u.email || 'N/A'}</td>
                         <td style="padding: 12px;">
                             <span class="badge ${badgeClass}">${(u.role || 'user').toUpperCase()}</span>
                         </td>
@@ -742,8 +746,11 @@ window.fetchAdminUsers = async () => {
                     </tr>
                 `;
             });
+        } else {
+            list.innerHTML = '<tr><td colspan="4" style="padding: 16px; text-align: center;">No users found in database.</td></tr>';
         }
     } catch (err) {
         console.error("Error fetching admin users:", err);
+        list.innerHTML = `<tr><td colspan="4" style="padding: 16px; text-align: center; color: red;">Error fetching users: ${err.message}</td></tr>`;
     }
 };
