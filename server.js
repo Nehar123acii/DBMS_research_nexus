@@ -63,10 +63,21 @@ const readJsonFallback = (filename) => {
     }
 };
 
-// --- PostgreSQL API Endpoints (Always Active) ---
+// --- PostgreSQL API Endpoints (With JSON Fallback) ---
 app.post('/api/register', async (req, res) => {
     const { firstName, lastName, email, password } = req.body;
+    
+    const safeUser = {
+        id: Date.now().toString(),
+        name: `${firstName} ${lastName}`,
+        email: email,
+        initials: `${firstName[0]}${lastName[0]}`,
+        role: 'user',
+        stats: { papersPublished: 0, citations: 0, collaborators: 0, datasetsShared: 0 }
+    };
+
     try {
+        if (!process.env.PG_URI) throw new Error("No PG_URI");
         const existing = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
         if (existing.rows.length > 0) {
             return res.status(400).json({ success: false, error: 'Email already exists' });
@@ -79,34 +90,40 @@ app.post('/api/register', async (req, res) => {
             'INSERT INTO users (first_name, last_name, email, password_hash, role) VALUES ($1, $2, $3, $4, $5) RETURNING *',
             [firstName, lastName, email, hashedPwd, 'user']
         );
-        
         const user = result.rows[0];
-        const safeUser = {
-            id: user.user_id,
-            name: `${user.first_name} ${user.last_name}`,
-            email: user.email,
-            initials: `${user.first_name[0]}${user.last_name[0]}`,
-            role: user.role || 'user',
-            stats: { papersPublished: 0, citations: 0, collaborators: 0, datasetsShared: 0 }
-        };
+        safeUser.id = user.user_id;
         
         const token = jwt.sign({ id: user.user_id, role: user.role }, JWT_SECRET, { expiresIn: '24h' });
-        res.status(201).json({ success: true, user: safeUser, token });
+        return res.status(201).json({ success: true, user: safeUser, token });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Database error' });
+        console.error("Postgres Error, falling back to JSON:", err.message);
+        try {
+            const users = readJsonFallback('users.json');
+            if (users.find(u => u.email === email)) return res.status(400).json({ success: false, error: 'Email already exists' });
+            
+            const salt = await bcrypt.genSalt(10);
+            safeUser.password_hash = await bcrypt.hash(password, salt);
+            users.push(safeUser);
+            fs.writeFileSync(path.join(__dirname, 'data', 'users.json'), JSON.stringify(users, null, 2));
+            
+            const token = jwt.sign({ id: safeUser.id, role: safeUser.role }, JWT_SECRET, { expiresIn: '24h' });
+            return res.status(201).json({ success: true, user: safeUser, token });
+        } catch (fbErr) {
+            console.error("JSON Fallback Error:", fbErr);
+            return res.status(500).json({ error: 'Database error' });
+        }
     }
 });
 
 app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
     try {
+        if (!process.env.PG_URI) throw new Error("No PG_URI");
         const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
         if (result.rows.length > 0) {
             const user = result.rows[0];
             const match = await bcrypt.compare(password, user.password_hash);
             
-            // Allow plaintext password fallback for users created before Phase 6
             if (!match && password !== user.password_hash) {
                 return res.status(401).json({ success: false, error: 'Invalid credentials' });
             }
@@ -121,13 +138,29 @@ app.post('/api/login', async (req, res) => {
             };
             
             const token = jwt.sign({ id: user.user_id, role: user.role }, JWT_SECRET, { expiresIn: '24h' });
-            res.json({ success: true, user: safeUser, token });
+            return res.json({ success: true, user: safeUser, token });
         } else {
-            res.status(401).json({ success: false, error: 'Invalid credentials' });
+            throw new Error("User not found in Postgres");
         }
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Database error' });
+        console.error("Postgres Error, falling back to JSON:", err.message);
+        try {
+            const users = readJsonFallback('users.json');
+            const user = users.find(u => u.email === email);
+            if (!user) return res.status(401).json({ success: false, error: 'Invalid credentials' });
+            
+            const match = await bcrypt.compare(password, user.password_hash);
+            if (!match && password !== user.password_hash) {
+                return res.status(401).json({ success: false, error: 'Invalid credentials' });
+            }
+            
+            user.stats = { papersPublished: 5, citations: 124, collaborators: 12, datasetsShared: 3 };
+            const token = jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, { expiresIn: '24h' });
+            return res.json({ success: true, user, token });
+        } catch (fbErr) {
+            console.error("JSON Fallback Error:", fbErr);
+            return res.status(500).json({ error: 'Database error' });
+        }
     }
 });
 

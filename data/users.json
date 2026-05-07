@@ -1,15 +1,30 @@
 [
   {
-    "id": "u1",
-    "name": "Dr. Priya Sharma",
-    "email": "priya@nexus.edu",
-    "password": "password123",
-    "initials": "PS",
+    "id": "1",
+    "name": "Neha Rajkumar",
+    "email": "neha@nexus.edu",
+    "password_hash": "password123",
+    "initials": "NR",
+    "role": "admin",
     "stats": {
-        "papersPublished": 24,
-        "citations": 1842,
-        "collaborators": 17,
-        "datasetsShared": 8
+      "papersPublished": 5,
+      "citations": 124,
+      "collaborators": 12,
+      "datasetsShared": 3
+    }
+  },
+  {
+    "id": "2",
+    "name": "Priya Sharma",
+    "email": "priya@nexus.edu",
+    "password_hash": "password123",
+    "initials": "PS",
+    "role": "user",
+    "stats": {
+      "papersPublished": 2,
+      "citations": 10,
+      "collaborators": 2,
+      "datasetsShared": 1
     }
   }
 ]
