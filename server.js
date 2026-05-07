@@ -164,6 +164,25 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
+// Admin endpoint to fetch all users
+app.get('/api/admin/users', async (req, res) => {
+    try {
+        if (!process.env.PG_URI) throw new Error("No PG_URI");
+        const result = await pool.query('SELECT user_id as id, first_name || \' \' || last_name as name, email, role FROM users');
+        res.json({ success: true, users: result.rows });
+    } catch (err) {
+        console.error("Admin Postgres Error, falling back to JSON:", err.message);
+        try {
+            const users = readJsonFallback('users.json');
+            // Remove sensitive password hashes before sending
+            const safeUsers = users.map(u => ({ id: u.id, name: u.name, email: u.email, role: u.role || 'user' }));
+            res.json({ success: true, users: safeUsers });
+        } catch (fbErr) {
+            res.status(500).json({ error: 'Database error' });
+        }
+    }
+});
+
 
 // Protect all API routes after auth
 app.use('/api', (req, res, next) => {

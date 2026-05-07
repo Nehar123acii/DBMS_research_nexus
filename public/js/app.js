@@ -713,3 +713,37 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 });
+
+window.fetchAdminUsers = async () => {
+    try {
+        const response = await fetch('/api/admin/users');
+        const data = await response.json();
+        if (data.success && data.users) {
+            const list = document.getElementById('admin-users-list');
+            if (!list) return;
+            list.innerHTML = '';
+            data.users.forEach(u => {
+                const badgeClass = u.role === 'admin' ? 'badge-primary' : 'badge-secondary';
+                list.innerHTML += `
+                    <tr style="border-bottom: 1px solid var(--border-color);">
+                        <td style="padding: 12px; font-weight: 500;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div class="avatar-small" style="width: 24px; height: 24px; font-size: 10px;">${(u.name || 'U').substring(0,2).toUpperCase()}</div>
+                                ${u.name}
+                            </div>
+                        </td>
+                        <td style="padding: 12px; color: var(--text-secondary);">${u.email}</td>
+                        <td style="padding: 12px;">
+                            <span class="badge ${badgeClass}">${(u.role || 'user').toUpperCase()}</span>
+                        </td>
+                        <td style="padding: 12px;">
+                            <button class="btn-outline" style="padding: 4px 8px; font-size: 12px;" ${u.role === 'admin' ? 'disabled' : ''}>Promote</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+    } catch (err) {
+        console.error("Error fetching admin users:", err);
+    }
+};
