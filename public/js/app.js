@@ -573,24 +573,42 @@ document.addEventListener('DOMContentLoaded', () => {
     window.fetchAdminUsers = async () => {
         const list = document.getElementById('admin-users-list');
         if (!list) return;
+        
+        list.innerHTML = '<tr><td colspan="4" style="padding: 16px; text-align: center;">Loading users...</td></tr>';
+        
         try {
-            const res = await fetch('/api/users');
-            const users = await res.json();
-            list.innerHTML = '';
-            users.forEach(u => {
-                const row = document.createElement('tr');
-                row.style.borderBottom = '1px solid var(--border-color)';
-                row.innerHTML = `
-                    <td style="padding: 12px;">${u.first_name} ${u.last_name}</td>
-                    <td style="padding: 12px;">${u.email}</td>
-                    <td style="padding: 12px;"><span style="padding: 4px 8px; border-radius: 4px; font-size: 12px; background: ${u.role === 'admin' ? 'rgba(46, 160, 113, 0.1)' : 'rgba(255,255,255,0.05)'}; color: ${u.role === 'admin' ? 'var(--accent-green)' : 'inherit'}">${u.role}</span></td>
-                    <td style="padding: 12px;">
-                        ${u.role !== 'admin' ? `<button class="btn-outline" style="padding: 4px 12px; font-size: 12px; border-color: #ef4444; color: #ef4444;" onclick="deleteUser('${u.user_id}')">Delete</button>` : ''}
-                    </td>
-                `;
-                list.appendChild(row);
-            });
-        } catch (err) { console.error(err); }
+            const response = await fetch('/api/admin/users');
+            const data = await response.json();
+            
+            if (data.success && data.users && data.users.length > 0) {
+                list.innerHTML = '';
+                data.users.forEach(u => {
+                    const badgeClass = u.role === 'admin' ? 'badge-primary' : 'badge-secondary';
+                    list.innerHTML += `
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 12px; font-weight: 500;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <div class="avatar-small" style="width: 24px; height: 24px; font-size: 10px;">${(u.name || 'U').substring(0,2).toUpperCase()}</div>
+                                    ${u.name || 'Unknown'}
+                                </div>
+                            </td>
+                            <td style="padding: 12px; color: var(--text-secondary);">${u.email || 'N/A'}</td>
+                            <td style="padding: 12px;">
+                                <span class="badge ${badgeClass}">${(u.role || 'user').toUpperCase()}</span>
+                            </td>
+                            <td style="padding: 12px;">
+                                <button class="btn-outline" style="padding: 4px 8px; font-size: 12px;" ${u.role === 'admin' ? 'disabled' : ''}>Promote</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } else {
+                list.innerHTML = '<tr><td colspan="4" style="padding: 16px; text-align: center;">No users found in database.</td></tr>';
+            }
+        } catch (err) {
+            console.error("Error fetching admin users:", err);
+            list.innerHTML = `<tr><td colspan="4" style="padding: 16px; text-align: center; color: red;">Error fetching users: ${err.message}</td></tr>`;
+        }
     };
 
     window.deleteUser = async (id) => {
@@ -713,44 +731,3 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 });
-
-window.fetchAdminUsers = async () => {
-    const list = document.getElementById('admin-users-list');
-    if (!list) return;
-    
-    list.innerHTML = '<tr><td colspan="4" style="padding: 16px; text-align: center;">Loading users...</td></tr>';
-    
-    try {
-        const response = await fetch('/api/admin/users');
-        const data = await response.json();
-        
-        if (data.success && data.users && data.users.length > 0) {
-            list.innerHTML = '';
-            data.users.forEach(u => {
-                const badgeClass = u.role === 'admin' ? 'badge-primary' : 'badge-secondary';
-                list.innerHTML += `
-                    <tr style="border-bottom: 1px solid var(--border-color);">
-                        <td style="padding: 12px; font-weight: 500;">
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <div class="avatar-small" style="width: 24px; height: 24px; font-size: 10px;">${(u.name || 'U').substring(0,2).toUpperCase()}</div>
-                                ${u.name || 'Unknown'}
-                            </div>
-                        </td>
-                        <td style="padding: 12px; color: var(--text-secondary);">${u.email || 'N/A'}</td>
-                        <td style="padding: 12px;">
-                            <span class="badge ${badgeClass}">${(u.role || 'user').toUpperCase()}</span>
-                        </td>
-                        <td style="padding: 12px;">
-                            <button class="btn-outline" style="padding: 4px 8px; font-size: 12px;" ${u.role === 'admin' ? 'disabled' : ''}>Promote</button>
-                        </td>
-                    </tr>
-                `;
-            });
-        } else {
-            list.innerHTML = '<tr><td colspan="4" style="padding: 16px; text-align: center;">No users found in database.</td></tr>';
-        }
-    } catch (err) {
-        console.error("Error fetching admin users:", err);
-        list.innerHTML = `<tr><td colspan="4" style="padding: 16px; text-align: center; color: red;">Error fetching users: ${err.message}</td></tr>`;
-    }
-};
